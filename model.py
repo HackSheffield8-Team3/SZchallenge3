@@ -1,4 +1,4 @@
-import pandas, hydro_model
+import hydro_model
 
 class EnergyGrid():
     def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW):
@@ -12,13 +12,29 @@ class EnergyGrid():
         # Solar data is based on 64.8MW installed
         SOLAR_POWER_MULTIPLIER = INSTALLED_SOLAR_MW/64.8
 
-        self.generation_data = pandas.DataFrame({
+        self.available_generation_data = {
             "geo": self.geo_array(),
             "wind": self.wind_array(WIND_POWER_MULTIPLIER),
             "solar": self.solar_array(SOLAR_POWER_MULTIPLIER)
-        })
+        }
+
+        self.usage_data = {
+            "geo": 0,
+            "wind": 0,
+            "solar": 0,
+            "hydro": 0
+        }
+
+        self.generation_data = {
+            "geo": 0,
+            "wind": 0,
+            "solar": 0,
+            "hydro": 0
+        }
 
         self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
+
+        self.total_wind_used = 0
 
 
     def geo_array(self):
@@ -38,23 +54,45 @@ class EnergyGrid():
         
         return [int(hsg_array[i])*SOLAR_POWER_MULTIPLIER for i in range(self.NUMBER_OF_TIME_STEPS)]
 
-
-
-
     
     def model_time_step(self, time):
-        print(f"Time {time}\nDemand is {self.DEMAND_POINTS[time]}")
+        print(f"Timestep {time}\nDemand: {self.DEMAND_POINTS[time]}")
         total_demand = self.DEMAND_POINTS[time]
         remaining_demand = total_demand
 
         # Subtracting the dc1
-        dc1 =  self.generation_data.iloc[time]["geo"]
-        print(f"dc1: {dc1}")
-        remaining_demand = remaining_demand - dc1
+        remaining_demand -= self.hydro_model.hydro_model_DC1(remaining_demand)
+        self.used_generation_data["hydro"] += self.hydro_model.hydro_model_DC1(remaining_demand)
+        print(f"dc1-hydro: {self.hydro_model.hydro_model_DC1(remaining_demand)}")
 
-        # Calculating the amount of dc2
-        dc2 = min(self.generation_data.iloc[time]["wind"] + self.generation_data.iloc[time]["solar"], remaining_demand)
-        print(f"dc2: {dc2}")
+        # Subtracting the dc2 - use solar then wind as solar is cheaper
+        dc2_solar = min(self.generation_data["solar"][time], remaining_demand)
+        remaining_demand -= dc2_solar
+        self.used_generation_data["solar"] += dc2_solar
+        print(f"dc2-solar: {dc2_solar}")
+
+        dc2_wind = min(self.generation_data["wind"][time], remaining_demand)
+        remaining_demand -= dc2_wind
+        self.used_generation_data["solar"] += dc2_wind
+        print(f"dc2-wind: {dc2_wind}")
+
+        # Subtracting the dc3
+        dc3 = min(0, remaining_demand)
+        print(f"dc3: {dc3}")
+        remaining_demand = remaining_demand - dc3
+
+        # Subtracting the dc4
+        dc4 = min(0, remaining_demand)
+        print(f"dc4: {dc4}")
+        remaining_demand = remaining_demand - dc4
+
+        if remaining_demand==0:
+            print("\033[92mDemand met!\033[0m")
+        elif remaining_demand>0:
+            print("\033[91mDemand not met!\033[0m")
+        else:
+            print("\033[91mGeneration exceeded demand!\033[0m")
+
 
         print("\n")
 
