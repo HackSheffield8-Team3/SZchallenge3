@@ -61,6 +61,7 @@ class EnergyGrid():
         remaining_demand = total_demand
 
         # Subtracting the dc1
+        print(type(remaining_demand))
         remaining_demand -= self.hydro_model.hydro_model_DC1(remaining_demand)
         self.used_generation_data["hydro"] += self.hydro_model.hydro_model_DC1(remaining_demand)
         print(f"dc1-hydro: {self.hydro_model.hydro_model_DC1(remaining_demand)}")

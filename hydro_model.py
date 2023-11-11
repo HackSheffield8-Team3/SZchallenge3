@@ -17,9 +17,9 @@ class HydroModel ():
         func documentation
         """
         output_requested = float(total_demand) * 0.20 # 20% of demand
-        hydro_potential += input_potential # water flows in
-        expected_potential = hydro_potential - output_requested # expected potential in reservoir - can be negative
-        hydro_potential = max(expected_potential, 0) # hydro potential is set to expected potential bound to 0+
+        self.hydro_potential += self.input_potential # water flows in
+        expected_potential = self.hydro_potential - output_requested # expected potential in reservoir - can be negative
+        self.hydro_potential = max(expected_potential, 0) # hydro potential is set to expected potential bound to 0+
         output_actual = output_requested + min(expected_potential, 0) 
         # if the requested output cannot be fully provided, the potential that could not be generated is removed from the requested amount
 
