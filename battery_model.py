@@ -6,7 +6,7 @@ class HydroModel ():
         self.remaining_space = TOTAL_STORAGE_POWER - power_stored
         
 
-    def store_power(power_to_store):
+    def store_power(self, power_to_store):
         """
         stores power given. Returns the amount of power it is unnable to store. If it can store all power given, returns 0.
         """
@@ -18,10 +18,10 @@ class HydroModel ():
         remaining_space = TOTAL_STORAGE_POWER - power_stored
         return remaining_space
 
-    def get_power_stored():
+    def get_power_stored(self):
         return stored_power
 
-    def get_remaining_space():
+    def get_remaining_space(self):
         return remaining_space
 
     
