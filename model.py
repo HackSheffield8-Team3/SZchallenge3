@@ -55,36 +55,48 @@ class EnergyGrid():
         return [int(hsg_array[i])*SOLAR_POWER_MULTIPLIER for i in range(self.NUMBER_OF_TIME_STEPS)]
 
     
+    def consume_energy(self, source, amount=None):
+        """
+        Records the consumption of a specific quantity of energy and updates the remaining energy accordingly. If amount is None, as much is consumed as is available up to the remaining amount
+        """
+        print(f"    {source}: ")
+        if amount==None:
+            
+
+    
     def model_time_step(self, time):
+        self.current_timestep_total_demand = self.DEMAND_POINTS[time]
+        self.current_timestep_remaining_demand = 
+
+
         print(f"Timestep {time}\nDemand: {self.DEMAND_POINTS[time]}")
-        total_demand = self.DEMAND_POINTS[time]
+        total_demand = 
         remaining_demand = total_demand
 
         # Subtracting the dc1
-        print(type(remaining_demand))
         remaining_demand -= self.hydro_model.hydro_model_DC1(remaining_demand)
-        self.used_generation_data["hydro"] += self.hydro_model.hydro_model_DC1(remaining_demand)
-        print(f"dc1-hydro: {self.hydro_model.hydro_model_DC1(remaining_demand)}")
+        self.usage_data["hydro"] += self.hydro_model.hydro_model_DC1(remaining_demand)
+        print(f"dc1-hydro: {round(self.hydro_model.hydro_model_DC1(remaining_demand),2)}")
 
         # Subtracting the dc2 - use solar then wind as solar is cheaper
-        dc2_solar = min(self.generation_data["solar"][time], remaining_demand)
+        dc2_solar = min(self.available_generation_data["solar"][time], remaining_demand)
         remaining_demand -= dc2_solar
-        self.used_generation_data["solar"] += dc2_solar
-        print(f"dc2-solar: {dc2_solar}")
+        self.usage_data["solar"] += dc2_solar
+        print(f"dc2-solar: {round(dc2_solar, 2)}")
 
-        dc2_wind = min(self.generation_data["wind"][time], remaining_demand)
+        dc2_wind = min(self.available_generation_data["wind"][time], remaining_demand)
         remaining_demand -= dc2_wind
-        self.used_generation_data["solar"] += dc2_wind
-        print(f"dc2-wind: {dc2_wind}")
+        self.usage_data["solar"] += dc2_wind
+        print(f"dc2-wind: {round(dc2_wind, 2)}")
 
         # Subtracting the dc3
         dc3 = min(0, remaining_demand)
-        print(f"dc3: {dc3}")
+        print(f"dc3: {round(dc3,2)}")
         remaining_demand = remaining_demand - dc3
 
         # Subtracting the dc4
         dc4 = min(0, remaining_demand)
-        print(f"dc4: {dc4}")
+        print(f"dc4: {round(dc4,2)}")
         remaining_demand = remaining_demand - dc4
 
         if remaining_demand==0:
