@@ -10,9 +10,25 @@ class HydroModel ();
         self.in_power_MW = in_power_MW
         self.FULL_HYDRO_POTENTIAL = FULL_HYDRO_POTENTIAL
 
+
+    def hydro_model_DC1(total_demand, timestep):
+        
+        out = total_demand * 0.2
+
+        if (hydro_potential >= out):
+            hydro_potential = hydro_potential - out
+            out = out
+        else:
+            out = hydro_potential
+            hydro_potential = 0
+            print(f"ERROR!!! AT {timestep}. HYDRO CANNOT PROVIDE ENOUGH POWER IN DC1")
+        return (out)
+
     def hydro_model (in_power_MW, out_power_request):
 
+
         total = hydro_potential + in_power_MW
+        if output 
         out = 0
 
         if (total > FULL_HYDRO_POTENTIAL):
