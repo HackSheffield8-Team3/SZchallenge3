@@ -3,31 +3,37 @@ class documentation
 """
 class HydroModel ():
 
-    def __init__(self, hydro_potential, in_power_MW, FULL_HYDRO_POTENTIAL):
+    def __init__(self, hydro_potential, input_potential, FULL_HYDRO_POTENTIAL):
         self.hydro_potential = hydro_potential
-        self.in_power_MW = in_power_MW
+        self.input_potential = input_potential
         self.FULL_HYDRO_POTENTIAL = FULL_HYDRO_POTENTIAL
 
 
 
 
 
-    def hydro_model_DC1(total_demand, timestep):
+    def hydro_model_DC1(self, total_demand):
         """
         func documentation
         """
-        out = total_demand * 0.2
-        hydro_potential = hydro_potential + in_power_MW
-        # if hydro can provide enough power, give the power
-        if (hydro_potential >= out):
-            hydro_potential = hydro_potential - out
-            out = out
+        output_requested = float(total_demand) * 0.20 # 20% of demand
+        hydro_potential += input_potential # water flows in
+        expected_potential = hydro_potential - output_requested # expected potential in reservoir - can be negative
+        hydro_potential = max(expected_potential, 0) # hydro potential is set to expected potential bound to 0+
+        output_actual = output_requested + min(expected_potential, 0) 
+        # if the requested output cannot be fully provided, the potential that could not be generated is removed from the requested amount
+
+        """
+        if (hydro_potential >= out): # give power 
+            hydro_potential -= out
+            # out = out ()
         else:
             # else, give what power it can and report an error
             out = hydro_potential
             hydro_potential = 0
-            print(f"ERROR!!! AT {timestep}. HYDRO CANNOT PROVIDE ENOUGH POWER IN DC1")
-        return (out)
+            print("ERROR: HYDRO CANNOT PROVIDE ENOUGH POWER IN DC1")
+        """
+        return output_actual
 
 
 
@@ -36,21 +42,13 @@ class HydroModel ():
 
 
 
-    def hydro_model_DC3 (out_power_request):
+    def hydro_model_DC3 (self, out_power_request):
         """
         func documentation
         """
-        expected_potential = hydro_potential - out_power_request
-
-        if (expected_potential < 0):
-            out = hydro_potential
-            expected_potential = 0
-        else:
-            hydro_potential = expected_potential
-            out = out_power_request
+        expected_potential = hydro_potential - output_requested
     
         # something
 
-
-        final_total = total - out
-
+    def hydro_model_remove_overflow ():
+        hydro_potential = min(hydro_potential, FULL_HYDRO_POTENTIAL)
