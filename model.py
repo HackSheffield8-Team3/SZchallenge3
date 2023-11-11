@@ -34,8 +34,6 @@ class EnergyGrid():
 
         self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
 
-        self.total_wind_used = 0
-
 
     def geo_array(self):
         with open("historic_geo_generation.txt") as hgg_file:
@@ -59,49 +57,41 @@ class EnergyGrid():
         """
         Records the consumption of a specific quantity of energy and updates the remaining energy accordingly. If amount is None, as much is consumed as is available up to the remaining amount
         """
-        print(f"    {source}: ")
-        if amount==None:
-            
+        if amount is None:
+            amount = min(self.current_timestep_remaining_demand, self.available_generation_data[source][self.current_timestep])
+        
+        self.current_timestep_remaining_demand -= amount
+        self.usage_data[source] += amount
+        print(f"  - {source}: {round(amount,2)}")
+
 
     
-    def model_time_step(self, time):
-        self.current_timestep_total_demand = self.DEMAND_POINTS[time]
-        self.current_timestep_remaining_demand = 
+    def model_time_step(self):
+        self.current_timestep_total_demand = self.DEMAND_POINTS[self.current_timestep]
+        self.current_timestep_remaining_demand = self.DEMAND_POINTS[self.current_timestep]
+        print(f"Timestep {self.current_timestep}\nDemand: {self.current_timestep_total_demand}")
 
-
-        print(f"Timestep {time}\nDemand: {self.DEMAND_POINTS[time]}")
-        total_demand = 
-        remaining_demand = total_demand
-
-        # Subtracting the dc1
-        remaining_demand -= self.hydro_model.hydro_model_DC1(remaining_demand)
-        self.usage_data["hydro"] += self.hydro_model.hydro_model_DC1(remaining_demand)
-        print(f"dc1-hydro: {round(self.hydro_model.hydro_model_DC1(remaining_demand),2)}")
+        # dc1
+        print("dc1")
+        self.consume_energy("hydro", amount=self.hydro_model.hydro_model_DC1(self.current_timestep_remaining_demand))
+        self.consume_energy("geo")
 
         # Subtracting the dc2 - use solar then wind as solar is cheaper
-        dc2_solar = min(self.available_generation_data["solar"][time], remaining_demand)
-        remaining_demand -= dc2_solar
-        self.usage_data["solar"] += dc2_solar
-        print(f"dc2-solar: {round(dc2_solar, 2)}")
-
-        dc2_wind = min(self.available_generation_data["wind"][time], remaining_demand)
-        remaining_demand -= dc2_wind
-        self.usage_data["solar"] += dc2_wind
-        print(f"dc2-wind: {round(dc2_wind, 2)}")
+        print("dc2")
+        self.consume_energy("solar")
+        self.consume_energy("wind")
 
         # Subtracting the dc3
         dc3 = min(0, remaining_demand)
         print(f"dc3: {round(dc3,2)}")
-        remaining_demand = remaining_demand - dc3
 
         # Subtracting the dc4
         dc4 = min(0, remaining_demand)
         print(f"dc4: {round(dc4,2)}")
-        remaining_demand = remaining_demand - dc4
 
-        if remaining_demand==0:
+        if self.current_timestep_remaining_demand==0:
             print("\033[92mDemand met!\033[0m")
-        elif remaining_demand>0:
+        elif self.current_timestep_remaining_demand>0:
             print("\033[91mDemand not met!\033[0m")
         else:
             print("\033[91mGeneration exceeded demand!\033[0m")
@@ -110,6 +100,6 @@ class EnergyGrid():
         print("\n")
 
     def run_model(self):
-        for current_time in range(self.NUMBER_OF_TIME_STEPS):
-            self.model_time_step(current_time)
+        for self.current_timestep in range(self.NUMBER_OF_TIME_STEPS):
+            self.model_time_step()
         print("Model done")
