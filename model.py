@@ -12,7 +12,10 @@ class EnergyGrid():
         self.FINAL_TIME_STEP = len(self.DEMAND_POINTS)
     
     def model_time_step(self, time):
-        print(f"Time {time}\nDemand is {self.DEMAND_POINTS[time]}\n")
+        print(f"Time {time}\nDemand is {self.DEMAND_POINTS[time]}")
+
+
+        print("\n")
 
     def run_model(self):
         for current_time in range(self.FINAL_TIME_STEP):
