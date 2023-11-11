@@ -90,11 +90,11 @@ class EnergyGrid():
         print(f"dc4: {round(dc4,2)}")
 
         if self.current_timestep_remaining_demand==0:
-            print("\033[92mDemand met!\033[0m")
+            print("\033[92mDemand met\033[0m")
         elif self.current_timestep_remaining_demand>0:
-            print("\033[91mDemand not met!\033[0m")
+            print(f"\033[91mDemand not met! (undersupplied by {round(self.current_timestep_remaining_demand)}) \033[0m")
         else:
-            print("\033[91mGeneration exceeded demand!\033[0m")
+            print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(-self.current_timestep_remaining_demand)}\033[0m")
 
 
         print("\n")
