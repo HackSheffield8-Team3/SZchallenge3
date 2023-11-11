@@ -12,7 +12,7 @@ class HydroModel ():
 
 
 
-    def hydro_model_DC1(total_demand):
+    def hydro_model_DC1(self, total_demand):
         """
         func documentation
         """
@@ -42,7 +42,7 @@ class HydroModel ():
 
 
 
-    def hydro_model_DC3 (output_requested):
+    def hydro_model_DC3 (self, out_power_request):
         """
         func documentation
         """
