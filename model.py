@@ -3,7 +3,9 @@ import pandas, hydro_model
 class EnergyGrid():
     def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW):
         with open("historic_demand_points.txt", "r") as dp_file:
-            self.DEMAND_POINTS = dp_file.readlines()
+            self.DEMAND_POINTS_STRINGS = dp_file.readlines()
+
+        self.DEMAND_POINTS = [int(x) for x in self.DEMAND_POINTS_STRINGS]
         
         self.NUMBER_OF_TIME_STEPS = len(self.DEMAND_POINTS)
 
@@ -16,7 +18,7 @@ class EnergyGrid():
             "solar": self.solar_array(SOLAR_POWER_MULTIPLIER)
         })
 
-        self.hydro_model = hydro_model.HydroModel(10000, 1000)
+        self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
 
 
     def geo_array(self):
@@ -46,12 +48,12 @@ class EnergyGrid():
         remaining_demand = total_demand
 
         # Subtracting the dc1
-        dc1 = self.generation_data[time]["geo"]
+        dc1 =  self.generation_data.iloc[time]["geo"]
         print(f"dc1: {dc1}")
         remaining_demand = remaining_demand - dc1
 
         # Calculating the amount of dc2
-        dc2 = min(self.generation_data[time]["wind"] + self.generation_data[time]["solar"], remaining_demand)
+        dc2 = min(self.generation_data.iloc[time]["wind"] + self.generation_data.iloc[time]["solar"], remaining_demand)
         print(f"dc2: {dc2}")
 
         print("\n")
