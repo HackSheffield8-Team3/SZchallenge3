@@ -82,11 +82,11 @@ class EnergyGrid():
         self.consume_energy("wind")
 
         # Subtracting the dc3
-        dc3 = min(0, remaining_demand)
+        dc3 = min(0, self.current_timestep_remaining_demand)
         print(f"dc3: {round(dc3,2)}")
 
         # Subtracting the dc4
-        dc4 = min(0, remaining_demand)
+        dc4 = min(0, self.current_timestep_remaining_demand)
         print(f"dc4: {round(dc4,2)}")
 
         if self.current_timestep_remaining_demand==0:
