@@ -22,7 +22,7 @@ class HydroModel ():
 
     def hydro_model_DC1(self, total_demand):
         self.hydro_potential += self.input_potential # water flows in
-        return hydro_model_output_request(self, float(total_demand) * 0.20) # request 20% of demand
+        return self.hydro_model_output_request(self, float(total_demand) * 0.20) # request 20% of demand
 
 
     def hydro_model_DC3 (self, output_requested):
