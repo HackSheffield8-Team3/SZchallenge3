@@ -14,7 +14,7 @@ class HydroModel ():
         self.hydro_potential = max(expected_potential, 0) # hydro potential is set to expected potential bound to 0+
         output_actual = output_requested + min(expected_potential, 0) 
         # if the requested output cannot be fully provided, the potential that could not be generated is removed from the requested amount
-
+        return output_actual
 
     def hydro_model_remove_overflow ():
         self.hydro_potential = min(hydro_potential, FULL_HYDRO_POTENTIAL)
