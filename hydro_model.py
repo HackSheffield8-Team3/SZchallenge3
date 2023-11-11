@@ -1,8 +1,6 @@
-
-
-# function takes total power into reservoirs, potential power stored in reservoirs, power out wanted by grid.
-# returns actual output power from dams
-
+"""
+class documentation
+"""
 class HydroModel ():
 
     def __init__(self, hydro_potential, in_power_MW, FULL_HYDRO_POTENTIAL):
@@ -15,7 +13,9 @@ class HydroModel ():
 
 
     def hydro_model_DC1(total_demand, timestep):
-        
+        """
+        func documentation
+        """
         out = total_demand * 0.2
 
         # if hydro can provide enough power, give the power
@@ -35,8 +35,11 @@ class HydroModel ():
 
 
 
-    def hydro_model (in_power_MW, out_power_request):
 
+    def hydro_model (in_power_MW, out_power_request):
+        """
+        func documentation
+        """
 
         total = hydro_potential + in_power_MW
         if output 
