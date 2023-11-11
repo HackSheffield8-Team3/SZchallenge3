@@ -36,14 +36,20 @@ class HydroModel ():
 
 
 
-    def hydro_model (out_power_request):
+    def hydro_model_DC3 (out_power_request):
         """
         func documentation
         """
-        expected_potential = hydro_potential-out_power_request
-        
+        expected_potential = hydro_potential - out_power_request
 
-
+        if (expected_potential < 0):
+            out = hydro_potential
+            expected_potential = 0
+        else:
+            hydro_potential = expected_potential
+            out = out_power_request
+    
+        # something
 
 
         final_total = total - out
