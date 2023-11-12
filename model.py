@@ -24,19 +24,27 @@ class EnergyGrid():
             "geo": 0,
             "wind": 0,
             "solar": 0,
-            "hydro": 0
+            "hydro": 0,
+            "fossil": 0
         }
 
         self.generation_data = {
             "geo": 0,
             "wind": 0,
             "solar": 0,
-            "hydro": 0
+            "hydro": 0,
+            "fossil": 0
         }
 
         self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
         self.wind_model = wind_model.WindModel()
         self.battery = battery_model.BatteryModel(INSTALLED_BATTERY_MW, 0)
+
+    def add_to_usage_data(self, source, mwhalfhours):
+        self.usage_data[source] += mwhalfhours/2
+
+    def add_to_generation_data(self, source, mwhalfhours):
+        self.generation_data[source] += mwhalfhours/2
 
 
     def geo_array(self):
@@ -65,13 +73,40 @@ class EnergyGrid():
             amount = min(self.current_timestep_remaining_demand, self.available_generation_data[source][self.current_timestep])
         
         self.current_timestep_remaining_demand -= amount
-        self.usage_data[source] += amount
-        self.generation_data[source] += amount
+        self.add_to_usage_data(source, amount)
+        self.add_to_generation_data(source, amount)
         print(f"  - {source}: {round(amount,2)}")
 
-
     def summary_statistics(self):
-        print("Summary ")
+        print("\033[1mSummary statistics\033[0m")
+
+        headers = [
+          "Source", "Generated (GWh)", "Used (GWh)", "Proportion of total usage"
+        ]
+
+        table_rows = []
+
+        total_generation = sum(self.generation_data.values())
+        total_usage = sum(self.usage_data.values())
+        table_rows.append(["Total", total_generation/1000, total_usage/1000, f"{(1):.2%}"])
+
+        renewable_generation = self.generation_data["geo"] + self.generation_data["wind"] + self.generation_data["hydro"] + self.generation_data["solar"]
+        renewable_usage = self.usage_data["geo"] + self.usage_data["wind"] + self.usage_data["hydro"] + self.usage_data["solar"]
+        table_rows.append(["  Renewable", renewable_generation/1000, renewable_usage/1000, f"{(renewable_usage/total_usage):.2%}"])
+
+        table_rows.append(["    geo", self.generation_data["geo"]/1000, self.usage_data["geo"]/1000, f"{(self.usage_data['geo']/total_usage):.2%}"])
+        table_rows.append(["    wind", self.generation_data["wind"]/1000, self.usage_data["wind"]/1000, f"{(self.usage_data['wind']/total_usage):.2%}"])
+        table_rows.append(["    hydro", self.generation_data["hydro"]/1000, self.usage_data["hydro"]/1000, f"{(self.usage_data['hydro']/total_usage):.2%}"])
+        table_rows.append(["    solar", self.generation_data["solar"]/1000, self.usage_data["solar"]/1000, f"{(self.usage_data['solar']/total_usage):.2%}"])
+
+        table_rows.append(["  Non-renewable", self.generation_data["fossil"]/1000, self.usage_data["fossil"]/1000, f"{(self.usage_data['fossil']/total_usage):.2%}"])
+        table_rows.append(["    fossil", self.generation_data["fossil"]/1000, self.usage_data["fossil"]/1000, f"{(self.usage_data['fossil']/total_usage):.2%}"])
+
+
+
+        tabulate.PRESERVE_WHITESPACE = True
+        print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
+
 
     
     def model_time_step(self):
@@ -91,10 +126,11 @@ class EnergyGrid():
         
         battery_stored = self.battery.store_power(wind_leftover_power)
         print(f"  - wind-stored: {battery_stored}")
+        self.consume_energy("wind", amount=battery_stored)
         wind_leftover_power -= battery_stored
 
         print(f"  - wind-wasted: {wind_leftover_power}" )
-        self.generation_data["wind"] += wind_leftover_power
+        self.add_to_generation_data("wind", wind_leftover_power)
 
         self.consume_energy("solar")
 
@@ -117,5 +153,5 @@ class EnergyGrid():
     def run_model(self):
         for self.current_timestep in range(self.NUMBER_OF_TIME_STEPS):
             self.model_time_step()
-        print("Model done")
+        print("MODEL DONE\n")
         self.summary_statistics()
