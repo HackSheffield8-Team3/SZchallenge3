@@ -181,7 +181,7 @@ class EnergyGrid():
 
         # dc2 
         print("dc2")
-        wind_useful_power, wind_leftover_power = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep])
+        wind_useful_power, wind_leftover_power = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep], 0)
         self.consume_energy("wind", amount=wind_useful_power)
         
         battery_stored = self.battery.store_power(wind_leftover_power)
