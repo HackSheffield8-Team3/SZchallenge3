@@ -63,4 +63,4 @@ def plot_param_batteries(start, end, step):
     plt.ylabel('cost')
     plt.show()
     
-plot_param_batteries(0, 1000000, 100000)
+plot_param_solar(0, 1000000, 10000)
