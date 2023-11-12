@@ -176,7 +176,7 @@ class EnergyGrid():
         wind_used, wind_stored, wind_wasted = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep], self.battery.get_remaining_space())
 
         self.battery.store_power(wind_stored)
-        self.add_to_usage_data("wind", wind_used)
+        self.add_to_usage_data("wind", wind_used+wind_stored)
         self.add_to_generation_data("wind", wind_used+wind_stored+wind_wasted)
 
         print(f"  - wind: {wind_used}")
@@ -261,6 +261,6 @@ class EnergyGrid():
 
         tabulate.PRESERVE_WHITESPACE = True
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
-        # graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.usage_data_arrays["battery"], self.DEMAND_POINTS)
+        graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.usage_data_arrays["battery"], self.DEMAND_POINTS)
 
         return ((renewable_usage/total_usage), cost)
