@@ -2,9 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# pass this function arrays: timesteps, hydro data, geo data, solar data
-def plot_usage(timesteps, hydro_data, geo_data, solar_data):
-    timeframes = timesteps
+# pass this function arrays: hydro data, geo data, solar data
+def plot_usage(hydro_data, geo_data, solar_data):
+    timeframes = list(range(0, len(hydro_data)))
     power_by_type = {
         'hydro': hydro_data,
         'geo': geo_data,
@@ -17,6 +17,6 @@ def plot_usage(timesteps, hydro_data, geo_data, solar_data):
     ax.legend(loc='upper left', reverse=True)
     ax.set_title('Power usage')
     ax.set_xlabel('timestep')
-    ax.set_ylabel('Usage (MW30m)')
+    ax.set_ylabel('Usage (MWh)')
 
     plt.show()
