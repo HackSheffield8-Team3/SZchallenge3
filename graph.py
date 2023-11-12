@@ -4,7 +4,7 @@ import numpy as np
 
 # pass this function arrays: timesteps, hydro data, geo data, solar data
 def plot_usage(timesteps, hydro_data, geo_data, solar_data):
-    timeframes = timeframes
+    timeframes = timesteps
     power_by_type = {
         'hydro': hydro_data,
         'geo': geo_data,
