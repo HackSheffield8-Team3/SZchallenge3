@@ -67,7 +67,7 @@ class EnergyGrid():
             "fossil": 0
         }
 
-        self.hydro_model = hydro_model.HydroModel(20000000, 5, 20000000)
+        self.hydro_model = hydro_model.HydroModel(20, 5, 20)
         self.wind_model = wind_model.WindModel()
         self.battery = battery_model.BatteryModel(INSTALLED_BATTERY_MW, 0)
 
