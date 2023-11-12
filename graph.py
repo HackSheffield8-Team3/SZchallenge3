@@ -3,7 +3,7 @@ import numpy as np
 
 
 # pass this function arrays: hydro data, geo data, solar data
-def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_data):
+def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, battery_data, demand_data):
     n = 1725
     
     
@@ -12,6 +12,7 @@ def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_
     solar_data = solar_data[:n]
     hydro_data = hydro_data[:n]
     fossil_data = fossil_data[:n]
+    battery_data = battery_data[:n]
     demand_data = demand_data[:n]
     
     timeframes = list(range(0, n))
@@ -23,7 +24,8 @@ def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_
         'wind': wind_data,
         'solar': solar_data,
         'hydro': hydro_data,
-        'fossil': fossil_data
+        'fossil': fossil_data,
+        'battery': battery_data
     }
 
     fig, ax = plt.subplots()
