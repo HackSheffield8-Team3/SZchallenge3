@@ -4,7 +4,7 @@ import numpy as np
 
 # pass this function arrays: hydro data, geo data, solar data
 def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_data):
-    n = 200
+    n = 500
     geo_data = geo_data[:n]
     wind_data = wind_data[:n]
     solar_data = solar_data[:n]
@@ -12,13 +12,13 @@ def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_
     fossil_data = fossil_data[:n]
     demand_data = demand_data[:n]   
     
-    timeframes = list(range(0, 200))
+    timeframes = list(range(0, n))
     
     
     
     power_by_type = {
         'geo': geo_data,
-        'wind': wind_data,
+        #'wind': wind_data,
         'solar': solar_data,
         'hydro': hydro_data
     }
