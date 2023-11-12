@@ -134,7 +134,6 @@ class EnergyGrid():
 
         tabulate.PRESERVE_WHITESPACE = True
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
-
         graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.DEMAND_POINTS)
 
 
@@ -163,6 +162,9 @@ class EnergyGrid():
         print(f"  - hydro: {hydro_dc1}")
         print(f"  - geo: {geo_dc1}")
 
+        self.add_to_generation_data("hydro", hydro_dc1)
+        self.add_to_generation_data("geo", geo_dc1)
+
         self.current_timestep_remaining_demand = self.current_timestep_total_demand - total_dc1
 
         excess = -self.current_timestep_remaining_demand
@@ -171,7 +173,11 @@ class EnergyGrid():
             print(f"    (stored excess dc1-generation: {round(excess,2)})")
             if amount_stored < excess:
                 self.report_exceeded_demand(excess-amount_stored)
-            return
+            
+            self.current_timestep_remaining_demand = 0
+
+        self.add_to_usage_data("hydro", hydro_dc1)
+        self.add_to_usage_data("geo", min(geo_dc1, self.current_timestep_total_demand - hydro_dc1))
 
         # dc2 
         print("dc2")
@@ -196,6 +202,8 @@ class EnergyGrid():
         # Subtracting the dc4
         dc4 = min(0, self.current_timestep_remaining_demand)
         print(f"dc4: {round(dc4,2)}")
+        self.add_to_generation_data("fossil", 0)
+        self.add_to_usage_data("fossil", 0)
 
         if self.current_timestep_remaining_demand==0:
             self.report_met_demand()
