@@ -4,7 +4,7 @@ import numpy as np
 
 # pass this function arrays: hydro data, geo data, solar data
 def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, battery_data, demand_data):
-    n = 1725
+    n = 600
     
     
     geo_data = geo_data[:n]
@@ -24,8 +24,8 @@ def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, battery
         'wind': wind_data,
         'solar': solar_data,
         'hydro': hydro_data,
+        'battery': battery_data,
         'fossil': fossil_data,
-        'battery': battery_data
     }
 
     fig, ax = plt.subplots()
