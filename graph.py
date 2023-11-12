@@ -5,9 +5,15 @@ import numpy as np
 # pass this function arrays: hydro data, geo data, solar data
 def plot_usage(hydro_data, geo_data, solar_data):
     
+    hydro_data = hydro_data[:100]
+    geo_data = geo_data[:100]
+    solar_data = solar_data[:100]
     
     
     timeframes = list(range(0, len(hydro_data)))
+    
+    
+    
     
     power_by_type = {
         'hydro': hydro_data,
