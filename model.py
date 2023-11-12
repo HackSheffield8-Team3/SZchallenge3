@@ -90,17 +90,13 @@ class EnergyGrid():
         return [int(hsg_array[i])*SOLAR_POWER_MULTIPLIER for i in range(self.NUMBER_OF_TIME_STEPS)]
 
     
-    def consume_energy(self, source, amount=None, force_consume_all=False):
+    def consume_energy(self, source, amount=None):
         """
         Records the consumption of a specific quantity of energy and updates the remaining energy accordingly.
         If amount is None, as much is consumed as is available up to the remaining amount
         Returns the amount consumed
         """
-        if amount is None:
-            amount = min(self.current_timestep_remaining_demand, self.available_generation_data[source][self.current_timestep])
-        
-        if force_consume_all is True:
-            amount = self.available_generation_data[source][self.current_timestep]
+        amount = min(self.current_timestep_remaining_demand, self.available_generation_data[source][self.current_timestep])
         
         self.current_timestep_remaining_demand -= amount
         self.add_to_usage_data(source, amount)
@@ -146,7 +142,7 @@ class EnergyGrid():
 
     def report_exceeded_demand(self, excess):
         self.gen_status_counts["excess"] += 1
-        print(f"\033[91mGeneration exceeded demand! (oversupplied by {round()}\033[0m")
+        print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(excess,2)})\033[0m")
         
     def report_unmet_demand(self, excess):
         self.gen_status_counts["deficit"] += 1
@@ -154,13 +150,18 @@ class EnergyGrid():
     
     def model_time_step(self):
         self.current_timestep_total_demand = self.DEMAND_POINTS[self.current_timestep]
-        self.current_timestep_remaining_demand = self.DEMAND_POINTS[self.current_timestep]
         print(f"Timestep {self.current_timestep}\nDemand: {self.current_timestep_total_demand}")
 
         # dc1
         print("dc1")
-        self.consume_energy("hydro", amount=self.hydro_model.hydro_model_DC1(self.current_timestep_total_demand))
-        self.consume_energy("geo", force_consume_all=True)
+        hydro_dc1 = self.hydro_model.hydro_model_DC1(self.current_timestep_total_demand) 
+        geo_dc1 = self.available_generation_data["geo"][self.current_timestep]
+        total_dc1 = hydro_dc1 + geo_dc1
+
+        print(f"  - hydro: {hydro_dc1}")
+        print(f"  - geo: {geo_dc1}")
+
+        self.current_timestep_remaining_demand = self.current_timestep_total_demand - total_dc1
 
         excess = -self.current_timestep_remaining_demand
         if excess > 0:
