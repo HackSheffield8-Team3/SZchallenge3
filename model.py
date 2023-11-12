@@ -170,7 +170,7 @@ class EnergyGrid():
         if wind_wasted>0:
             print(f"(curtailed excess wind generation): {wind_wasted}")
 
-        solar_used = min(self.available_generation_data["wind"][self.current_timestep], self.current_timestep_remaining_demand)
+        solar_used = min(self.available_generation_data["solar"][self.current_timestep], self.current_timestep_remaining_demand)
         print(f"  - solar: {solar_used}")
         self.add_to_generation_data("solar", solar_used)
         self.add_to_usage_data("solar", solar_used)
