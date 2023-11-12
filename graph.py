@@ -3,22 +3,30 @@ import numpy as np
 
 
 # pass this function arrays: hydro data, geo data, solar data
-def plot_usage(hydro_data, geo_data, solar_data):
+def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_data):
     
-    hydro_data = hydro_data[:100]
+    
     geo_data = geo_data[:100]
+    wind_data = wind_data[:100]
     solar_data = solar_data[:100]
+    hydro_data = hydro_data[:100]
+    fossil_data = fossil_data[:100]
+    demand_data = demand_data[:100]
+    
+    
     
     
     timeframes = list(range(0, len(hydro_data)))
     
     
-    
+    print(solar_data)
     
     power_by_type = {
-        'hydro': hydro_data,
         'geo': geo_data,
+        'wind': wind_data,
         'solar': solar_data,
+        'hydro': hydro_data,
+        'fossil': fossil_data
     }
 
     fig, ax = plt.subplots()
