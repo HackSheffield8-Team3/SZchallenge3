@@ -1,4 +1,4 @@
-import hydro_model, wind_model, battery_model, tabulate, graph
+import hydro_model, wind_model, battery_model, tabulate, graph, cost_calculator
 
 class EnergyGrid():
     def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW):
@@ -214,6 +214,9 @@ class EnergyGrid():
         
         print(f"Modelled {self.NUMBER_OF_TIME_STEPS} time steps in total\nGeneration matched demand on {self.gen_status_counts['match']}\nGeneration exceeded demand on {self.gen_status_counts['excess']}\nDemand exceeded generation on {self.gen_status_counts['deficit']}\n")
 
+        print(f'Cost: $\
+                {cost_calculator.calculate_cost(self.generation_totals["hydro"], self.generation_totals["geo"], 0, 0, self.generation_totals["wind"], self.generation_totals["solar"], 0, self.INSTALLED_BATTERY_MW):.2}')
+
         headers = [
           "Source", "Generated (GWh)", "Used (GWh)", "Proportion of total usage"
         ]
@@ -235,7 +238,6 @@ class EnergyGrid():
 
         table_rows.append(["  Non-renewable", self.generation_totals["fossil"]/1000, self.usage_data_totals["fossil"]/1000, f"{(self.usage_data_totals['fossil']/total_usage):.2%}"])
         table_rows.append(["    fossil", self.generation_totals["fossil"]/1000, self.usage_data_totals["fossil"]/1000, f"{(self.usage_data_totals['fossil']/total_usage):.2%}"])
-
 
         tabulate.PRESERVE_WHITESPACE = True
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
