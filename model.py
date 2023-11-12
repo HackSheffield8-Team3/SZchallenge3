@@ -1,4 +1,4 @@
-import hydro_model, wind_model, battery_model, tabulate
+import hydro_model, wind_model, battery_model, tabulate, graph
 
 class EnergyGrid():
     def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW):
@@ -20,7 +20,7 @@ class EnergyGrid():
             "solar": self.solar_array(SOLAR_POWER_MULTIPLIER)
         }
 
-        self.usage_data = {
+        self.usage_data_totals = {
             "geo": 0,
             "wind": 0,
             "solar": 0,
@@ -28,12 +28,35 @@ class EnergyGrid():
             "fossil": 0
         }
 
-        self.generation_data = {
+        self.generation_totals = {
             "geo": 0,
             "wind": 0,
             "solar": 0,
             "hydro": 0,
             "fossil": 0
+        }
+
+        self.usage_data_arrays = {
+            "geo": [],
+            "wind": [],
+            "solar": [],
+            "hydro": [],
+            "fossil": []
+        }
+
+
+        self.generation_arrays = {
+            "geo": [],
+            "wind": [],
+            "solar": [],
+            "hydro": [],
+            "fossil": []
+        }
+
+        self.gen_status_counts = {
+            "match": 0,
+            "excess": 0,
+            "deficit": 0
         }
 
         self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
@@ -41,10 +64,12 @@ class EnergyGrid():
         self.battery = battery_model.BatteryModel(INSTALLED_BATTERY_MW, 0)
 
     def add_to_usage_data(self, source, mwhalfhours):
-        self.usage_data[source] += mwhalfhours/2
+        self.usage_data_totals[source] += mwhalfhours/2
+        self.usage_data_arrays[source].append(mwhalfhours/2)
 
     def add_to_generation_data(self, source, mwhalfhours):
-        self.generation_data[source] += mwhalfhours/2
+        self.generation_totals[source] += mwhalfhours/2
+        self.generation_arrays[source].append(mwhalfhours/2)
 
 
     def geo_array(self):
@@ -92,21 +117,21 @@ class EnergyGrid():
 
         table_rows = []
 
-        total_generation = sum(self.generation_data.values())
-        total_usage = sum(self.usage_data.values())
+        total_generation = sum(self.generation_totals.values())
+        total_usage = sum(self.usage_data_totals.values())
         table_rows.append(["Total", total_generation/1000, total_usage/1000, f"{(1):.2%}"])
 
-        renewable_generation = self.generation_data["geo"] + self.generation_data["wind"] + self.generation_data["hydro"] + self.generation_data["solar"]
-        renewable_usage = self.usage_data["geo"] + self.usage_data["wind"] + self.usage_data["hydro"] + self.usage_data["solar"]
+        renewable_generation = self.generation_totals["geo"] + self.generation_totals["wind"] + self.generation_totals["hydro"] + self.generation_totals["solar"]
+        renewable_usage = self.usage_data_totals["geo"] + self.usage_data_totals["wind"] + self.usage_data_totals["hydro"] + self.usage_data_totals["solar"]
         table_rows.append(["  Renewable", renewable_generation/1000, renewable_usage/1000, f"{(renewable_usage/total_usage):.2%}"])
 
-        table_rows.append(["    geo", self.generation_data["geo"]/1000, self.usage_data["geo"]/1000, f"{(self.usage_data['geo']/total_usage):.2%}"])
-        table_rows.append(["    wind", self.generation_data["wind"]/1000, self.usage_data["wind"]/1000, f"{(self.usage_data['wind']/total_usage):.2%}"])
-        table_rows.append(["    hydro", self.generation_data["hydro"]/1000, self.usage_data["hydro"]/1000, f"{(self.usage_data['hydro']/total_usage):.2%}"])
-        table_rows.append(["    solar", self.generation_data["solar"]/1000, self.usage_data["solar"]/1000, f"{(self.usage_data['solar']/total_usage):.2%}"])
+        table_rows.append(["    geo", self.generation_totals["geo"]/1000, self.usage_data_totals["geo"]/1000, f"{(self.usage_data_totals['geo']/total_usage):.2%}"])
+        table_rows.append(["    wind", self.generation_totals["wind"]/1000, self.usage_data_totals["wind"]/1000, f"{(self.usage_data_totals['wind']/total_usage):.2%}"])
+        table_rows.append(["    hydro", self.generation_totals["hydro"]/1000, self.usage_data_totals["hydro"]/1000, f"{(self.usage_data_totals['hydro']/total_usage):.2%}"])
+        table_rows.append(["    solar", self.generation_totals["solar"]/1000, self.usage_data_totals["solar"]/1000, f"{(self.usage_data_totals['solar']/total_usage):.2%}"])
 
-        table_rows.append(["  Non-renewable", self.generation_data["fossil"]/1000, self.usage_data["fossil"]/1000, f"{(self.usage_data['fossil']/total_usage):.2%}"])
-        table_rows.append(["    fossil", self.generation_data["fossil"]/1000, self.usage_data["fossil"]/1000, f"{(self.usage_data['fossil']/total_usage):.2%}"])
+        table_rows.append(["  Non-renewable", self.generation_totals["fossil"]/1000, self.usage_data_totals["fossil"]/1000, f"{(self.usage_data_totals['fossil']/total_usage):.2%}"])
+        table_rows.append(["    fossil", self.generation_totals["fossil"]/1000, self.usage_data_totals["fossil"]/1000, f"{(self.usage_data_totals['fossil']/total_usage):.2%}"])
 
 
 
@@ -114,6 +139,17 @@ class EnergyGrid():
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
 
 
+    def report_met_demand(self):
+        self.gen_status_counts["match"] += 1
+        print("\033[92mDemand met\033[0m")
+
+    def report_exceeded_demand(self, excess):
+        self.gen_status_counts["excess"] += 1
+        print(f"\033[91mGeneration exceeded demand! (oversupplied by {round()}\033[0m")
+        
+    def report_unmet_demand(self, excess):
+        self.gen_status_counts["deficit"] += 1
+        print(f"\033[91mDemand not met! (undersupplied by {round(excess,2)}) \033[0m")
     
     def model_time_step(self):
         self.current_timestep_total_demand = self.DEMAND_POINTS[self.current_timestep]
@@ -130,7 +166,7 @@ class EnergyGrid():
             amount_stored = self.battery.store_power(excess)
             print(f"    (stored excess dc1-generation: {round(excess,2)})")
             if amount_stored < excess:
-                print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(excess-amount_stored)}\033[0m")
+                self.report_exceeded_demand(excess-amount_stored)
             return
 
         # dc2 
@@ -157,11 +193,11 @@ class EnergyGrid():
         print(f"dc4: {round(dc4,2)}")
 
         if self.current_timestep_remaining_demand==0:
-            print("\033[92mDemand met\033[0m")
+            self.report_met_demand()
         elif self.current_timestep_remaining_demand>0:
-            print(f"\033[91mDemand not met! (undersupplied by {round(self.current_timestep_remaining_demand,2)}) \033[0m")
+            self.report_unmet_demand(self.current_timestep_remaining_demand)
         else:
-            print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(-self.current_timestep_remaining_demand,2)}\033[0m")
+            self.report_exceeded_demand(-self.current_timestep_remaining_demand)
         print("\n")
         
     def run_model(self):
