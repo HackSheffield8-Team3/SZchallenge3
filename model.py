@@ -106,6 +106,8 @@ class EnergyGrid():
 
     def summary_statistics(self):
         print("\033[1mSummary statistics\033[0m")
+        
+        print(f"Modelled {self.NUMBER_OF_TIME_STEPS} time steps in total\nGeneration matched demand on {self.gen_status_counts['match']}\nGeneration exceeded demand on {self.gen_status_counts['excess']}\nDemand exceeded generation on {self.gen_status_counts['deficit']}\n")
 
         headers = [
           "Source", "Generated (GWh)", "Used (GWh)", "Proportion of total usage"
