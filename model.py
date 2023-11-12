@@ -1,7 +1,10 @@
-import hydro_model, wind_model, battery_model, tabulate, graph, cost_calculator
+import hydro_model, wind_model, battery_model, tabulate, graph, cost_calculator, sys
 
 class EnergyGrid():
-    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW, INSTALLED_GAS_MW):
+    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW, INSTALLED_GAS_MW, NO_TEXT_OUT=False):
+        if NO_TEXT_OUT:
+            sys.stdout = None
+
         with open("historic_demand_points.txt", "r") as dp_file:
             self.DEMAND_POINTS_STRINGS = dp_file.readlines()
 
@@ -127,6 +130,15 @@ class EnergyGrid():
             "hydro": 0,
             "fossil": 0
         }
+
+        self.current_timestep_generation = {
+             "geo": 0,
+            "wind": 0,
+            "solar": 0,
+            "hydro": 0,
+            "fossil": 0
+        }
+
 
         self.current_timestep_total_demand = self.DEMAND_POINTS[self.current_timestep]
         self.current_timestep_remaining_demand = self.current_timestep_total_demand
