@@ -16,8 +16,8 @@ class HydroModel ():
         # if the requested output cannot be fully provided, the potential that could not be generated is removed from the requested amount
         return output_actual
 
-    def hydro_model_remove_overflow ():
-        self.hydro_potential = min(hydro_potential, FULL_HYDRO_POTENTIAL)
+    def hydro_model_remove_overflow (self):
+        self.hydro_potential = min(self.hydro_potential, self.FULL_HYDRO_POTENTIAL)
 
 
     def hydro_model_DC1(self, total_demand):
@@ -26,4 +26,4 @@ class HydroModel ():
 
 
     def hydro_model_DC3 (self, output_requested):
-        hydro_model_output_request(self, output_requested)
+        self.hydro_model_output_request(self, output_requested)
