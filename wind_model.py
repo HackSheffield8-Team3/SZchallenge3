@@ -1,4 +1,4 @@
-class WindModel ():
+class WindModel:
     def wind_model(self, requested_output, actual_output, available_storage_capacity):
         #if demand less than wind energy output, useful power is total requested output and leftover is remaining wind energy
         if requested_output < actual_output:
