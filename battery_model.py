@@ -2,27 +2,24 @@ class BatteryModel():
 
     def __init__(self, TOTAL_STORAGE_POWER, power_stored):
         self.TOTAL_STORAGE_POWER = TOTAL_STORAGE_POWER
-        self.power_stored = potential_stored
+        self.power_stored = power_stored
         self.remaining_space = TOTAL_STORAGE_POWER - power_stored
         
 
     def store_power(self, power_to_store):
         """
-        stores power given. Returns the amount of power it is unnable to store. If it can store all power given, returns 0.
+        stores power given. Returns the amount of power actually stored (which is less than power given if the battery does not have enough space)
         """
-        if power_to_store <= remaining_space:
-            power_stored += power_to_store
-        else:
-            power_stored = TOTAL_STORAGE_POWER
-        
-        remaining_space = TOTAL_STORAGE_POWER - power_stored
-        return remaining_space
+        storable_power = min(power_to_store, self.remaining_space)
+        self.power_stored += storable_power        
+        self.remaining_space = self.TOTAL_STORAGE_POWER - self.power_stored
+        return storable_power
 
     def get_power_stored(self):
-        return stored_power
+        return self.stored_power
 
     def get_remaining_space(self):
-        return remaining_space
+        return self.remaining_space
 
     
 

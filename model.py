@@ -1,4 +1,4 @@
-import hydro_model, wind_model
+import hydro_model, wind_model, battery_model
 
 class EnergyGrid():
     def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW):
@@ -8,6 +8,8 @@ class EnergyGrid():
         self.DEMAND_POINTS = [int(x) for x in self.DEMAND_POINTS_STRINGS]
         
         self.NUMBER_OF_TIME_STEPS = len(self.DEMAND_POINTS)
+
+        self.INSTALLED_BATTERY_MW = INSTALLED_BATTERY_MW
 
         # Solar data is based on 64.8MW installed
         SOLAR_POWER_MULTIPLIER = INSTALLED_SOLAR_MW/64.8
@@ -34,6 +36,7 @@ class EnergyGrid():
 
         self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
         self.wind_model = wind_model.WindModel()
+        self.battery = battery_model.BatteryModel(INSTALLED_BATTERY_MW, 0)
 
 
     def geo_array(self):
@@ -82,6 +85,11 @@ class EnergyGrid():
         print("dc2")
         wind_useful_power, wind_leftover_power = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep])
         self.consume_energy("wind", amount=wind_useful_power)
+        
+        battery_stored = self.battery.store_power(wind_leftover_power)
+        print(f"  - wind-stored: {battery_stored}")
+        wind_leftover_power -= battery_stored
+
         print(f"  - wind-wasted: {wind_leftover_power}" )
         self.generation_data["wind"] += wind_leftover_power
 
@@ -101,11 +109,10 @@ class EnergyGrid():
             print(f"\033[91mDemand not met! (undersupplied by {round(self.current_timestep_remaining_demand)}) \033[0m")
         else:
             print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(-self.current_timestep_remaining_demand)}\033[0m")
-
-
         print("\n")
-
+        
     def run_model(self):
         for self.current_timestep in range(self.NUMBER_OF_TIME_STEPS):
             self.model_time_step()
         print("Model done")
+        self.summary_statistics()
