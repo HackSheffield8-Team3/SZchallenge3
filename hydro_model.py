@@ -21,6 +21,7 @@ class HydroModel ():
 
 
     def hydro_model_DC1(self, total_demand):
+        self.hydro_model_remove_overflow();
         self.hydro_potential += self.input_potential # water flows in
         return self.hydro_model_output_request(float(total_demand) * 0.20) # request 20% of demand
 
