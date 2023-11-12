@@ -150,7 +150,7 @@ class EnergyGrid():
         geo_dc1 = self.available_generation_data["geo"][self.current_timestep]
         total_dc1 = hydro_dc1 + geo_dc1
 
-        print(f"  - hydro: round({hydro_dc1},2)")
+        print(f"  - hydro: {round(hydro_dc1,2)}")
         print(f"  - geo: {round(min(geo_dc1, self.current_timestep_total_demand - hydro_dc1), 2)}")
 
         self.add_to_generation_data("hydro", hydro_dc1)
@@ -158,9 +158,6 @@ class EnergyGrid():
 
         self.add_to_usage_data("hydro", hydro_dc1)
         self.add_to_usage_data("geo", min(geo_dc1, self.current_timestep_total_demand - hydro_dc1))
-
-
-        print(self.current_timestep_remaining_demand)
 
         excess = -self.current_timestep_remaining_demand
         if excess > 0:
@@ -176,21 +173,22 @@ class EnergyGrid():
         wind_used, wind_stored, wind_wasted = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep], self.battery.get_remaining_space())
 
         self.battery.store_power(wind_stored)
-        self.add_to_usage_data("wind", wind_used)
+        self.add_to_usage_data("wind", wind_used+wind_stored)
         self.add_to_generation_data("wind", wind_used+wind_stored+wind_wasted)
 
-        print(f"  - wind: {wind_used}")
+        print(f"  - wind: {round(wind_used,2)}")
         if wind_stored>0:
             print(f"(stored excess wind generation: {wind_stored})")
         if wind_wasted>0:
             print(f"(curtailed excess wind generation): {wind_wasted}")
 
         solar_used = min(self.available_generation_data["solar"][self.current_timestep], self.current_timestep_remaining_demand)
-        print(f"  - solar: {solar_used}")
+        print(f"  - solar: {round(solar_used,2)}")
         self.add_to_generation_data("solar", solar_used)
         self.add_to_usage_data("solar", solar_used)
         
         # Subtracting the dc3
+        print("dc3")
         dc3_from_hydro = self.hydro_model.hydro_model_DC3(self.current_timestep_remaining_demand)
         self.add_to_generation_data("hydro", dc3_from_hydro)
         self.add_to_usage_data("hydro", dc3_from_hydro)
@@ -202,6 +200,7 @@ class EnergyGrid():
 
 
         # Subtracting the dc4
+        print("dc4")
         gas_used = min(self.INSTALLED_GAS_MW, self.current_timestep_remaining_demand)
         print(f"  - gas: {gas_used:.2}")
         self.add_to_generation_data("fossil", gas_used)
@@ -227,13 +226,16 @@ class EnergyGrid():
         return self.summary_statistics()
 
     def summary_statistics(self):
+        total_generation = sum(self.generation_totals.values())
+        total_usage = sum(self.usage_data_totals.values())
 
         cost = round(cost_calculator.calculate_cost(self.generation_totals["hydro"], self.generation_totals["geo"], 0, 0, self.generation_totals["wind"], self.generation_totals["solar"], 0, self.INSTALLED_BATTERY_MW),2)
         print("\033[1mSummary statistics\033[0m")
         
         print(f"Modelled {self.NUMBER_OF_TIME_STEPS} time steps in total\nGeneration matched demand on {self.gen_status_counts['match']}\nGeneration exceeded demand on {self.gen_status_counts['excess']}\nDemand exceeded generation on {self.gen_status_counts['deficit']}\n")
 
-        print(f'Cost: ${cost:,}\n')
+        print(f'Cost to fulfill all demand: ${cost:,.2f}')
+        print(f'Cost per MWh used: ${cost/total_usage:,.2f}\n')
 
         print(f'Battery maximum state of charge: {self.battery.max_state_of_charge}\n')
 
@@ -243,8 +245,7 @@ class EnergyGrid():
 
         table_rows = []
 
-        total_generation = sum(self.generation_totals.values())
-        total_usage = sum(self.usage_data_totals.values())
+        
         table_rows.append(["Total", total_generation/1000, total_usage/1000, f"{(1):.2%}"])
 
         renewable_generation = self.generation_totals["geo"] + self.generation_totals["wind"] + self.generation_totals["hydro"] + self.generation_totals["solar"]
