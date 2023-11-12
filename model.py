@@ -65,17 +65,23 @@ class EnergyGrid():
         return [int(hsg_array[i])*SOLAR_POWER_MULTIPLIER for i in range(self.NUMBER_OF_TIME_STEPS)]
 
     
-    def consume_energy(self, source, amount=None):
+    def consume_energy(self, source, amount=None, force_consume_all=False):
         """
-        Records the consumption of a specific quantity of energy and updates the remaining energy accordingly. If amount is None, as much is consumed as is available up to the remaining amount
+        Records the consumption of a specific quantity of energy and updates the remaining energy accordingly.
+        If amount is None, as much is consumed as is available up to the remaining amount
+        Returns the amount consumed
         """
         if amount is None:
             amount = min(self.current_timestep_remaining_demand, self.available_generation_data[source][self.current_timestep])
+        
+        if force_consume_all is True:
+            amount = self.available_generation_data[source][self.current_timestep]
         
         self.current_timestep_remaining_demand -= amount
         self.add_to_usage_data(source, amount)
         self.add_to_generation_data(source, amount)
         print(f"  - {source}: {round(amount,2)}")
+        return amount
 
     def summary_statistics(self):
         print("\033[1mSummary statistics\033[0m")
@@ -116,8 +122,16 @@ class EnergyGrid():
 
         # dc1
         print("dc1")
-        self.consume_energy("hydro", amount=self.hydro_model.hydro_model_DC1(self.current_timestep_remaining_demand))
-        self.consume_energy("geo")
+        self.consume_energy("hydro", amount=self.hydro_model.hydro_model_DC1(self.current_timestep_total_demand))
+        self.consume_energy("geo", force_consume_all=True)
+
+        excess = -self.current_timestep_remaining_demand
+        if excess > 0:
+            amount_stored = self.battery.store_power(excess)
+            print(f"    (stored excess dc1-generation: {round(excess,2)})")
+            if amount_stored < excess:
+                print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(excess-amount_stored)}\033[0m")
+            return
 
         # dc2 
         print("dc2")
@@ -145,9 +159,9 @@ class EnergyGrid():
         if self.current_timestep_remaining_demand==0:
             print("\033[92mDemand met\033[0m")
         elif self.current_timestep_remaining_demand>0:
-            print(f"\033[91mDemand not met! (undersupplied by {round(self.current_timestep_remaining_demand)}) \033[0m")
+            print(f"\033[91mDemand not met! (undersupplied by {round(self.current_timestep_remaining_demand,2)}) \033[0m")
         else:
-            print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(-self.current_timestep_remaining_demand)}\033[0m")
+            print(f"\033[91mGeneration exceeded demand! (oversupplied by {round(-self.current_timestep_remaining_demand,2)}\033[0m")
         print("\n")
         
     def run_model(self):
