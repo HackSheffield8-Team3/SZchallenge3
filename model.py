@@ -177,11 +177,12 @@ class EnergyGrid():
         
         battery_stored = self.battery.store_power(wind_leftover_power)
         print(f"  - wind-stored: {battery_stored}")
-        self.consume_energy("wind", amount=battery_stored)
         wind_leftover_power -= battery_stored
+        self.add_to_usage_data("wind", wind_leftover_power)
+        self.add_to_generation_data("wind", wind_leftover_power)
+
 
         print(f"  - wind-wasted: {wind_leftover_power}" )
-        self.add_to_generation_data("wind", wind_leftover_power)
 
         self.consume_energy("solar")
 
