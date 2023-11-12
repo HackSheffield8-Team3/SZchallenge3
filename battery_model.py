@@ -4,6 +4,7 @@ class BatteryModel():
         self.TOTAL_STORAGE_POWER = TOTAL_STORAGE_POWER
         self.power_stored = power_stored
         self.remaining_space = TOTAL_STORAGE_POWER - power_stored
+        self.max_state_of_charge = power_stored
         
 
     def store_power(self, power_to_store):
@@ -13,6 +14,7 @@ class BatteryModel():
         storable_power = min(power_to_store, self.remaining_space)
         self.power_stored += storable_power        
         self.remaining_space = self.TOTAL_STORAGE_POWER - self.power_stored
+        self.max_state_of_charge = max(self.max_state_of_charge, self.power_stored)
         return storable_power
 
     def get_power_stored(self):
