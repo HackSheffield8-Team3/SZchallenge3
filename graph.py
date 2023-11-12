@@ -5,11 +5,11 @@ import numpy as np
 # pass this function arrays: hydro data, geo data, solar data
 def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_data):
     n = 500
-    geo_data = [i * 0.5 for i in geo_data[:n]]
-    wind_data = [i * 0.5 for i in wind_data[:n]]
-    solar_data = [i * 0.5 for i in solar_data[:n]]
-    hydro_data = [i * 0.5 for i in hydro_data[:n]]
-    fossil_data = [i * 0.5 for i in fossil_data[:n]]
+    geo_data = [i * 1 for i in geo_data[:n]]
+    wind_data = [i * 1 for i in wind_data[:n]]
+    solar_data = [i * 1 for i in solar_data[:n]]
+    hydro_data = [i * 1 for i in hydro_data[:n]]
+    fossil_data = [i * 1 for i in fossil_data[:n]]
     demand_data = demand_data[:n]
     
     timeframes = list(range(0, n))
