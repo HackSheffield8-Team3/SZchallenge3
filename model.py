@@ -1,7 +1,7 @@
 import hydro_model, wind_model, battery_model, tabulate, graph, cost_calculator, sys
 
 class EnergyGrid():
-    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW, INSTALLED_GAS_MW, NO_TEXT_OUT=False):
+    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW, INSTALLED_GAS_MW, NO_TEXT_OUT=True):
         if NO_TEXT_OUT:
             sys.stdout = None
 
@@ -261,6 +261,6 @@ class EnergyGrid():
 
         tabulate.PRESERVE_WHITESPACE = True
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
-        graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.usage_data_arrays["battery"], self.DEMAND_POINTS)
+        #graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.usage_data_arrays["battery"], self.DEMAND_POINTS)
 
         return ((renewable_usage/total_usage), cost, total_usage)

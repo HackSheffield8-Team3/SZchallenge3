@@ -1,5 +1,6 @@
 from model import EnergyGrid
 import scipy.optimize as optimize
+import csv
 
 def func_to_optimise(args): # WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW
     a,b,c = args
@@ -8,7 +9,7 @@ def func_to_optimise(args): # WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALL
     data = grid.run_model()
 
     #return data[1] * (1-data[0]) # use inverse percentage to hopefully maximise renewables whilst minimising cost. potentially problematic
-    return list(data[:3])  # data[0] is renewable %, data[1]
+    return [data[0], data[1]/data[2]]  # data[0] is renewable %, data[1] is cost ($), total usage (MWh) 
     """
     if data[0] <=0.98:
         return 9999999999999999999999999
@@ -16,20 +17,20 @@ def func_to_optimise(args): # WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALL
         return data[1]
     """
 
+res = 10 # note that no. of lines is res^n
 
-wind_res = 4 
-solar_res = 4
-battery_res = 4
+wind_res = res
+solar_res = res
+battery_res = res
 
-wind_limit = 100 # remember this is a multiplier
-solar_limit = 10000
-battery_limit = 20000
+wind_limit = 1e3 # remember this is a multiplier
+solar_limit = 1e6
+battery_limit = 5e5
 
-import csv
 with open('Cost_Data.csv', 'w', newline='') as f:
     writer = csv.writer(f)
 
-    writer.writerow(["Wind Power Multiplier (MW)", "Installed Solar (MW)", "Installed Battery (MW)", "Renewable Energy (%)", "Cost ($)"])
+    writer.writerow(["Wind Power Multiplier (MW)", "Installed Solar (MW)", "Installed Battery (MW)", "Renewable Energy (%)", "Cost ($/MWh)"])
 
     for wind_i in range(wind_res):
         for solar_i in range(solar_res):
@@ -39,7 +40,6 @@ with open('Cost_Data.csv', 'w', newline='') as f:
                 battery = battery_i * (battery_limit/battery_res)
                 writer.writerow([wind,solar,battery] + func_to_optimise([wind,solar,battery]))
 
-print("Data written!")
 """
 
 initial_guess = [2, 6600, 10000]
