@@ -1,4 +1,4 @@
-import hydro_model, wind_model, battery_model
+import hydro_model, wind_model, battery_model, tabulate
 
 class EnergyGrid():
     def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW):
@@ -69,6 +69,9 @@ class EnergyGrid():
         self.generation_data[source] += amount
         print(f"  - {source}: {round(amount,2)}")
 
+
+    def summary_statistics(self):
+        print("Summary ")
 
     
     def model_time_step(self):
