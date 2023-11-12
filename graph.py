@@ -4,11 +4,15 @@ import numpy as np
 
 # pass this function arrays: hydro data, geo data, solar data
 def plot_usage(hydro_data, geo_data, solar_data):
+    
+    n=100
+    
     timeframes = list(range(0, len(hydro_data)))
+    
     power_by_type = {
-        'hydro': hydro_data,
-        'geo': geo_data,
-        'solar': solar_data,
+        'hydro': hydro_data[:n],
+        'geo': geo_data[:n],
+        'solar': solar_data[:n],
     }
 
     fig, ax = plt.subplots()
