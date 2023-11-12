@@ -3,7 +3,7 @@ class WindModel ():
         #if demand less than wind energy output, useful power is total requested output and leftover is remaining wind energy
         if requested_output < actual_output:
             used = requested_output
-            leftover_power = actual_output - useful_power
+            leftover_power = actual_output - used
         #if demand greater than/equal to wind energy output, useful power is all wind energy at timestamp and leftover is zero
         else:
             used = actual_output
