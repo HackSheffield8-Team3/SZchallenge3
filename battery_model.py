@@ -20,6 +20,17 @@ class BatteryModel():
 
     def get_remaining_space(self):
         return self.remaining_space
+    
+    def discharge (self, requested_output):
+        
+        if self.power_stored >= requested_output:
+            self.power_stored -= requested_output
+            return requested_output
+        
+        if self.power_stored < requested_output:
+            output = self.power_stored
+            self.power_stored = 0
+            return output
 
     
 
