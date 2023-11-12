@@ -1,7 +1,7 @@
 import hydro_model, wind_model, battery_model, tabulate, graph, cost_calculator
 
 class EnergyGrid():
-    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW):
+    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW, INSTALLED_GAS_MW):
         with open("historic_demand_points.txt", "r") as dp_file:
             self.DEMAND_POINTS_STRINGS = dp_file.readlines()
 
@@ -67,9 +67,11 @@ class EnergyGrid():
             "fossil": 0
         }
 
-        self.hydro_model = hydro_model.HydroModel(20000000, 10000, 20000000)
+        self.hydro_model = hydro_model.HydroModel(20000000, 5, 20000000)
         self.wind_model = wind_model.WindModel()
         self.battery = battery_model.BatteryModel(INSTALLED_BATTERY_MW, 0)
+
+        self.INSTALLED_GAS_MW = INSTALLED_GAS_MW
 
     def geo_array(self):
         with open("historic_geo_generation.txt") as hgg_file:
@@ -186,10 +188,11 @@ class EnergyGrid():
 
 
         # Subtracting the dc4
-        dc4 = min(0, self.current_timestep_remaining_demand)
-        print(f"dc4: {round(dc4,2)}")
-        self.add_to_generation_data("fossil", 0)
-        self.add_to_usage_data("fossil", 0)
+        gas_used = min(self.INSTALLED_GAS_MW, self.current_timestep_remaining_demand)
+        print(f"  - gas: {gas_used:.2}")
+        self.add_to_generation_data("fossil", gas_used)
+        self.add_to_usage_data("fossil", gas_used)
+        
 
         if self.current_timestep_remaining_demand==0:
             self.report_met_demand()
