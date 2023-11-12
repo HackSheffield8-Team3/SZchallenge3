@@ -59,8 +59,8 @@ def plot_param_batteries(start, end, step):
         
     
     plt.plot(i_list, cost)
-    plt.xlabel('wind param')
+    plt.xlabel('batteries param')
     plt.ylabel('cost')
     plt.show()
     
-plot_param_batteries(0, 100000000000, 1000)
+plot_param_batteries(0, 1000000, 100000)
