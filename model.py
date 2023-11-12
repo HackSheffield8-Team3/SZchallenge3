@@ -215,7 +215,7 @@ class EnergyGrid():
         print(f"Modelled {self.NUMBER_OF_TIME_STEPS} time steps in total\nGeneration matched demand on {self.gen_status_counts['match']}\nGeneration exceeded demand on {self.gen_status_counts['excess']}\nDemand exceeded generation on {self.gen_status_counts['deficit']}\n")
 
         print(f'Cost: $\
-                {cost_calculator.calculate_cost(self.generation_totals["hydro"], self.generation_totals["geo"], 0, 0, self.generation_totals["wind"], self.generation_totals["solar"], 0, self.INSTALLED_BATTERY_MW):.2}')
+                {cost_calculator.calculate_cost(self.generation_totals["hydro"], self.generation_totals["geo"], 0, 0, self.generation_totals["wind"], self.generation_totals["solar"], 0, self.INSTALLED_BATTERY_MW):10.2}\n')
 
         headers = [
           "Source", "Generated (GWh)", "Used (GWh)", "Proportion of total usage"
