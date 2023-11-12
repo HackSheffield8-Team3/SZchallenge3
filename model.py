@@ -59,7 +59,7 @@ class EnergyGrid():
             "deficit": 0
         }
 
-        self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
+        self.hydro_model = hydro_model.HydroModel(200000, 100000, 200000)
         self.wind_model = wind_model.WindModel()
         self.battery = battery_model.BatteryModel(INSTALLED_BATTERY_MW, 0)
 

@@ -18,7 +18,7 @@ def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_
     
     power_by_type = {
         'geo': geo_data,
-        #'wind': wind_data,
+        'wind': wind_data,
         'solar': solar_data,
         'hydro': hydro_data
     }
@@ -26,6 +26,7 @@ def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_
     fig, ax = plt.subplots()
     ax.stackplot(timeframes, power_by_type.values(),
                  labels=power_by_type.keys(), alpha=0.8)
+    ax.plot(timeframes, demand_data)
     ax.legend(loc='upper left', reverse=True)
     ax.set_title('Power usage')
     ax.set_xlabel('timestep')
