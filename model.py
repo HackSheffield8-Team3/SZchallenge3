@@ -135,8 +135,8 @@ class EnergyGrid():
         geo_dc1 = self.available_generation_data["geo"][self.current_timestep]
         total_dc1 = hydro_dc1 + geo_dc1
 
-        print(f"  - hydro: {hydro_dc1}")
-        print(f"  - geo: {min(geo_dc1, self.current_timestep_total_demand - hydro_dc1)}")
+        print(f"  - hydro: round({hydro_dc1},2)")
+        print(f"  - geo: {round(min(geo_dc1, self.current_timestep_total_demand - hydro_dc1), 2)}")
 
         self.add_to_generation_data("hydro", hydro_dc1)
         self.add_to_generation_data("geo", geo_dc1)
@@ -176,8 +176,14 @@ class EnergyGrid():
         self.add_to_usage_data("solar", solar_used)
         
         # Subtracting the dc3
-        dc3 = min(0, self.current_timestep_remaining_demand)
-        print(f"dc3: {round(dc3,2)}")
+        dc3_from_hydro = self.hydro_model.hydro_model_DC3(self.current_timestep_remaining_demand)
+        self.add_to_generation_data("hydro", dc3_from_hydro)
+        self.add_to_usage_data("hydro", dc3_from_hydro)
+        print(f"  - hydro: {round(dc3_from_hydro,2)}")
+
+        dc3_from_battery = self.battery.discharge(self.current_timestep_remaining_demand)
+        print(f"  - battery: {round(dc3_from_battery,2)}")
+
 
         # Subtracting the dc4
         dc4 = min(0, self.current_timestep_remaining_demand)

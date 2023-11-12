@@ -26,4 +26,4 @@ class HydroModel ():
 
 
     def hydro_model_DC3 (self, output_requested):
-        return self.hydro_model_output_request(self, output_requested)
+        return self.hydro_model_output_request(output_requested)
