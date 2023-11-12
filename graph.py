@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# pass this function an array of hydro_usage every time step, in MW.
+# pass this function arrays: timesteps, hydro data, geo data, solar data
 def plot_usage(timesteps, hydro_data, geo_data, solar_data):
     timeframes = timeframes
     power_by_type = {
