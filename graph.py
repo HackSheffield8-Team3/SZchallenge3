@@ -12,15 +12,15 @@ def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_
     fossil_data = fossil_data[:n]
     demand_data = demand_data[:n]   
     
-    timeframes = list(range(0, len(hydro_data)))
+    timeframes = list(range(0, 200))
+    
     
     
     power_by_type = {
         'geo': geo_data,
         'wind': wind_data,
         'solar': solar_data,
-        'hydro': hydro_data,
-        'fossil': fossil_data
+        'hydro': hydro_data
     }
 
     fig, ax = plt.subplots()
