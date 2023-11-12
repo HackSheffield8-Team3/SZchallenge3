@@ -160,7 +160,7 @@ class EnergyGrid():
         total_dc1 = hydro_dc1 + geo_dc1
 
         print(f"  - hydro: {hydro_dc1}")
-        print(f"  - geo: {geo_dc1}")
+        print(f"  - geo: {min(geo_dc1, self.current_timestep_total_demand - hydro_dc1)}")
 
         self.add_to_generation_data("hydro", hydro_dc1)
         self.add_to_generation_data("geo", geo_dc1)
@@ -181,17 +181,18 @@ class EnergyGrid():
 
         # dc2 
         print("dc2")
-        wind_useful_power, wind_leftover_power = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep])
-        self.consume_energy("wind", amount=wind_useful_power)
+        wind_used, wind_stored, wind_wasted = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep], self.battery.get_remaining_space())
+
+        self.battery.store_power(wind_stored)
+        self.add_to_usage_data("wind", wind_used)
+        self.add_to_generation_data("wind", wind_used+wind_stored+wind_wasted)
+
+        print(f"  - wind: {wind_used}")
+        if wind_stored>0:
+            print(f"(stored excess wind generation: {wind_stored})")
+        if wind_wasted>0:
+            print(f"(curtailed excess wind generation): {wind_wasted}")
         
-        battery_stored = self.battery.store_power(wind_leftover_power)
-        print(f"  - wind-stored: {battery_stored}")
-        wind_leftover_power -= battery_stored
-        self.add_to_usage_data("wind", wind_leftover_power)
-        self.add_to_generation_data("wind", wind_leftover_power)
-
-
-        print(f"  - wind-wasted: {wind_leftover_power}" )
 
         self.consume_energy("solar")
 

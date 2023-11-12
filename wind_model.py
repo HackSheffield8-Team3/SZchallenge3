@@ -6,7 +6,7 @@ class WindModel ():
             leftover_power = actual_output - useful_power
         #if demand greater than/equal to wind energy output, useful power is all wind energy at timestamp and leftover is zero
         else:
-            useful_power = actual_output
+            used = actual_output
             leftover_power = 0
         
         stored  = min(leftover_power, available_storage_capacity)
