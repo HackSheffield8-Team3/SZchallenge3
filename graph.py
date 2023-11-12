@@ -4,7 +4,7 @@ import numpy as np
 
 # pass this function arrays: hydro data, geo data, solar data
 def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_data):
-    n = 17250
+    n = 1725
     
     
     geo_data = geo_data[:n]
