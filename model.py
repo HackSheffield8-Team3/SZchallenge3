@@ -223,6 +223,8 @@ class EnergyGrid():
 
         print(f'Cost: ${cost:,}\n')
 
+        print(f'Battery maximum state of charge: {self.battery.max_state_of_charge}\n')
+
         headers = [
           "Source", "Generated (GWh)", "Used (GWh)", "Proportion of total usage"
         ]
@@ -247,6 +249,6 @@ class EnergyGrid():
 
         tabulate.PRESERVE_WHITESPACE = True
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
-        graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.usage_data_arrays["battery"], self.DEMAND_POINTS)
+        # graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.usage_data_arrays["battery"], self.DEMAND_POINTS)
 
         return ((renewable_usage/total_usage), cost)
