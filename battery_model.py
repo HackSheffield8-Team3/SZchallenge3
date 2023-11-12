@@ -1,4 +1,4 @@
-class HydroModel ():
+class BatteryModel():
 
     def __init__(self, TOTAL_STORAGE_POWER, power_stored):
         self.TOTAL_STORAGE_POWER = TOTAL_STORAGE_POWER

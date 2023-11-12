@@ -1,7 +1,7 @@
-import hydro_model
+import hydro_model, wind_model
 
 class EnergyGrid():
-    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW):
+    def __init__(self, WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW):
         with open("historic_demand_points.txt", "r") as dp_file:
             self.DEMAND_POINTS_STRINGS = dp_file.readlines()
 
@@ -33,6 +33,7 @@ class EnergyGrid():
         }
 
         self.hydro_model = hydro_model.HydroModel(10000, 1000, 10000)
+        self.wind_model = wind_model.WindModel()
 
 
     def geo_array(self):
@@ -62,6 +63,7 @@ class EnergyGrid():
         
         self.current_timestep_remaining_demand -= amount
         self.usage_data[source] += amount
+        self.generation_data[source] += amount
         print(f"  - {source}: {round(amount,2)}")
 
 
@@ -76,10 +78,14 @@ class EnergyGrid():
         self.consume_energy("hydro", amount=self.hydro_model.hydro_model_DC1(self.current_timestep_remaining_demand))
         self.consume_energy("geo")
 
-        # Subtracting the dc2 - use solar then wind as solar is cheaper
+        # dc2 
         print("dc2")
+        wind_useful_power, wind_leftover_power = self.wind_model.wind_model(self.current_timestep_remaining_demand, self.available_generation_data["wind"][self.current_timestep])
+        self.consume_energy("wind", amount=wind_useful_power)
+        print(f"  - wind-wasted: {wind_leftover_power}" )
+        self.generation_data["wind"] += wind_leftover_power
+
         self.consume_energy("solar")
-        self.consume_energy("wind")
 
         # Subtracting the dc3
         dc3 = min(0, self.current_timestep_remaining_demand)
