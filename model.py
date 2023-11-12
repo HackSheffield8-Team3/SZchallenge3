@@ -11,8 +11,8 @@ class EnergyGrid():
 
         self.INSTALLED_BATTERY_MW = INSTALLED_BATTERY_MW
 
-        # Solar data is based on 64.8MW installed
-        SOLAR_POWER_MULTIPLIER = INSTALLED_SOLAR_MW/64.8
+        # Solar data is based on 32.4MW installed
+        SOLAR_POWER_MULTIPLIER = INSTALLED_SOLAR_MW/32.4
 
         self.available_generation_data = {
             "geo": self.geo_array(),
