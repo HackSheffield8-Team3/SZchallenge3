@@ -212,15 +212,16 @@ class EnergyGrid():
         for self.current_timestep in range(self.NUMBER_OF_TIME_STEPS):
             self.model_time_step()
         print("MODEL DONE\n")
-        self.summary_statistics()
+        return self.summary_statistics()
 
     def summary_statistics(self):
+
+        cost = round(cost_calculator.calculate_cost(self.generation_totals["hydro"], self.generation_totals["geo"], 0, 0, self.generation_totals["wind"], self.generation_totals["solar"], 0, self.INSTALLED_BATTERY_MW),2)
         print("\033[1mSummary statistics\033[0m")
         
         print(f"Modelled {self.NUMBER_OF_TIME_STEPS} time steps in total\nGeneration matched demand on {self.gen_status_counts['match']}\nGeneration exceeded demand on {self.gen_status_counts['excess']}\nDemand exceeded generation on {self.gen_status_counts['deficit']}\n")
 
-        print(f'Cost: $\
-                {int(cost_calculator.calculate_cost(self.generation_totals["hydro"], self.generation_totals["geo"], 0, 0, self.generation_totals["wind"], self.generation_totals["solar"], 0, self.INSTALLED_BATTERY_MW))}\n')
+        print(f'Cost: ${cost:,}\n')
 
         headers = [
           "Source", "Generated (GWh)", "Used (GWh)", "Proportion of total usage"
@@ -247,3 +248,5 @@ class EnergyGrid():
         tabulate.PRESERVE_WHITESPACE = True
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
         graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"], self.usage_data_arrays["wind"], self.usage_data_arrays["fossil"], self.usage_data_arrays["battery"], self.DEMAND_POINTS)
+
+        return ((renewable_usage/total_usage), cost)
