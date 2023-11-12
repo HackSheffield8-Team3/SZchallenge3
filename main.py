@@ -1,4 +1,4 @@
 from model import EnergyGrid
 
-grid = EnergyGrid(7, 78625, 0, 10000)
+grid = EnergyGrid(4.48, 85000, 0, 100000)
 grid.run_model()
