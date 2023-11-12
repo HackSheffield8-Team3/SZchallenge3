@@ -46,10 +46,3 @@ Total                     81642.84      81625.34  100.00%
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
-
-## Credits
-
-* Jason - main logic, optimisation ideas, staying up all night
-* Echo - graphing, horrific code
-* Ben - fixing Echo's code, maths
-* Emma - wind model, diagrams
