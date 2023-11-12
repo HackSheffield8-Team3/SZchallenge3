@@ -89,11 +89,11 @@ class EnergyGrid():
         return [int(hsg_array[i])*SOLAR_POWER_MULTIPLIER for i in range(self.NUMBER_OF_TIME_STEPS)]
 
     def add_to_usage_data(self, source, mwhalfhours):
-        self.current_timestep_usage[source] += mwhalfhours/2
+        self.current_timestep_usage[source] += mwhalfhours
         self.current_timestep_remaining_demand -= mwhalfhours
 
     def add_to_generation_data(self, source, mwhalfhours):
-        self.current_timestep_generation[source] += mwhalfhours/2
+        self.current_timestep_generation[source] += mwhalfhours
 
     def commit_data_for_timestep(self):
         for source in self.current_timestep_usage.keys():

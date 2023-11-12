@@ -5,6 +5,8 @@ import numpy as np
 # pass this function arrays: hydro data, geo data, solar data
 def plot_usage(hydro_data, geo_data, solar_data, wind_data, fossil_data, demand_data):
     n = 500
+    
+    
     geo_data = geo_data[:n]
     wind_data = wind_data[:n]
     solar_data = solar_data[:n]
