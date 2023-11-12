@@ -188,6 +188,7 @@ class EnergyGrid():
         self.add_to_usage_data("solar", solar_used)
         
         # Subtracting the dc3
+        print("dc3")
         dc3_from_hydro = self.hydro_model.hydro_model_DC3(self.current_timestep_remaining_demand)
         self.add_to_generation_data("hydro", dc3_from_hydro)
         self.add_to_usage_data("hydro", dc3_from_hydro)
@@ -199,6 +200,7 @@ class EnergyGrid():
 
 
         # Subtracting the dc4
+        print("dc4")
         gas_used = min(self.INSTALLED_GAS_MW, self.current_timestep_remaining_demand)
         print(f"  - gas: {gas_used:.2}")
         self.add_to_generation_data("fossil", gas_used)
