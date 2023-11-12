@@ -134,9 +134,10 @@ class EnergyGrid():
         table_rows.append(["    fossil", self.generation_totals["fossil"]/1000, self.usage_data_totals["fossil"]/1000, f"{(self.usage_data_totals['fossil']/total_usage):.2%}"])
 
 
-
         tabulate.PRESERVE_WHITESPACE = True
         print(tabulate.tabulate(table_rows, headers=headers, floatfmt=".2f"))
+
+        graph.plot_usage(self.usage_data_arrays["hydro"], self.usage_data_arrays["geo"], self.usage_data_arrays["solar"])
 
 
     def report_met_demand(self):
