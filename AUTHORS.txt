@@ -1,8 +1,8 @@
 Jason Kambites <jkambites1@sheffield.ac.uk>
     main logic, optimisation ideas, staying up all night
 
-Echo <email>
- - graphing, horrific code
+Echo <edgarratt1@sheffield.ac.uk>
+ - graphing, horrific code, staying up all night
 
 Benjamin William Smith <bsmith21@sheffield.ac.uk> - fixing Echo's code, last-minute CSV output, drawing maths on the whiteboard
 
