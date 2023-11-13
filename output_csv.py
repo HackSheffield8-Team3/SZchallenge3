@@ -4,7 +4,7 @@ import csv
 
 def func_to_optimise(args): # WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALLED_BATTERY_MW
     a,b,c = args
-    grid = EnergyGrid(a,b,c,999999999,NO_TEXT_OUT=True) # INSTALLED_GAS_MW set to functional infinity
+    grid = EnergyGrid(a,b,c,1e10,NO_TEXT_OUT=True) # INSTALLED_GAS_MW set to functional infinity
     grid = grid
     data = grid.run_model()
 
@@ -17,27 +17,34 @@ def func_to_optimise(args): # WIND_POWER_MULTIPLIER, INSTALLED_SOLAR_MW, INSTALL
         return data[1]
     """
 
-res = 10 # note that no. of lines is res^n
+res = 3 # note that no. of lines is (res+1)^n and this will affect runtime, thought they can be set individually
 
 wind_res = res
 solar_res = res
 battery_res = res
 
-wind_limit = 1e3 # remember this is a multiplier
-solar_limit = 1e6
-battery_limit = 5e5
+wind_min = 4.45
+solar_min = 84e3
+battery_min = 0
 
-with open('Cost_Data.csv', 'w', newline='') as f:
+wind_limit = 4.5 #1e3 # remember this is a multiplier
+solar_limit = 85e3 #1e6
+battery_limit = 1e3 #5e5
+
+mode = "a"
+#from tqdm import tqdm
+
+with open("Cost_Data_Aggregate.csv", mode, newline='') as f:
     writer = csv.writer(f)
+    if mode == "w":
+        writer.writerow(["Wind Power Multiplier (MW)", "Installed Solar (MW)", "Installed Battery (MW)", "Renewable Energy (%)", "Cost ($/MWh)"])
 
-    writer.writerow(["Wind Power Multiplier (MW)", "Installed Solar (MW)", "Installed Battery (MW)", "Renewable Energy (%)", "Cost ($/MWh)"])
-
-    for wind_i in range(wind_res):
-        for solar_i in range(solar_res):
-            for battery_i in range(battery_res):
-                wind = wind_i * (wind_limit/wind_res)
-                solar = solar_i * (solar_limit/solar_res)
-                battery = battery_i * (battery_limit/battery_res)
+    for wind_i in range(wind_res+1): #next: add trange or tqdm wrapper for nested progress bars
+        for solar_i in range(solar_res+1):
+            for battery_i in range(battery_res+1):
+                wind = wind_min + (wind_i * (wind_limit - wind_min)/wind_res)
+                solar = solar_min + (solar_i * (solar_limit - solar_min)/solar_res)
+                battery = battery_min + (battery_i * (battery_limit - battery_min)/battery_res)
                 writer.writerow([wind,solar,battery] + func_to_optimise([wind,solar,battery]))
 
 """
