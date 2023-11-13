@@ -50,6 +50,6 @@ Total                     81642.84      81625.34  100.00%
 ## Credits
 
 * Jason - main logic, optimisation ideas, staying up all night
-* Echo - graphing, horrific code
+* Echo - graphing, horrific code, staying up all night
 * Ben - fixing Echo's code, maths
 * Emma - wind model, diagrams
