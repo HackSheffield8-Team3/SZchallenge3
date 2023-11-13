@@ -4,6 +4,6 @@ Jason Kambites <jkambites1@sheffield.ac.uk>
 Echo <email>
  - graphing, horrific code
 
-Ben <email> - fixing Echo's code, maths
+Benjamin William Smith <bsmith21@sheffield.ac.uk> - fixing Echo's code, last-minute CSV output, drawing maths on the whiteboard
 
-Emma <espruce1@sheffield.ac.uk> - wind model, diagrams
+Emma Spruce <espruce1@sheffield.ac.uk> - wind model, diagrams
