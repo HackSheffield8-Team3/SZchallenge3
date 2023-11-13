@@ -1,0 +1,9 @@
+Jason Kambites <jkambites1@sheffield.ac.uk>
+    main logic, optimisation ideas, staying up all night
+
+Echo <email>
+ - graphing, horrific code
+
+Ben <email> - fixing Echo's code, maths
+
+Emma <espruce1@sheffield.ac.uk> - wind model, diagrams
