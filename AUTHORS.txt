@@ -6,4 +6,4 @@ Echo <email>
 
 Ben <email> - fixing Echo's code, maths
 
-Emma <email> - wind model, diagrams
+Emma <espruce1@sheffield.ac.uk> - wind model, diagrams
